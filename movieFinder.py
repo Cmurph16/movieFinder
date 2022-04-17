@@ -26,7 +26,7 @@ def display_movie_info(movie):
     # IMDb base movie URL 
     base_imdb_url = 'https://www.imdb.com/title/'
 
-    print('Your random movie picked is: {}. It came out in {} and has a {} on IMDb'.format(movie['title'], movie['year'], movie['imDbRating']))
+    print("Your random movie picked is: {} ({}). It has a {} on IMDb and is {} on IMDb's top 250.".format(movie['title'], movie['year'], movie['imDbRating'], movie['rank']))
     print('Here is the IMDb page: {}'.format(base_imdb_url + movie['id']))
 
 def log_movie(movie):
@@ -51,6 +51,20 @@ def log_movie(movie):
                 log_WRITE.write(formatted_log)
         return 0
 
+def more_info(id):
+    with open('imdb.key') as imdb_api_file:
+        IMDB_API = imdb_api_file.read().splitlines()[0]
+    specific_movie_url = 'https://imdb-api.com/en/API/Title/{}/{}'.format(IMDB_API, id)
+    response = requests.get(specific_movie_url)
+    infoDict = response.json()
+    print('-'*40)
+    print('Awards:      {}'.format(infoDict['awards']))
+    print('Runtime:     {}'.format(infoDict['runtimeStr']))
+    print('Directors:   {}'.format(infoDict['directors']))
+    print('Stars:       {}'.format(infoDict['stars']))
+    print('Plot:')
+    print(infoDict['plot'])
+
 def main():
     # get movie
     movie = get_random_movie()
@@ -60,6 +74,10 @@ def main():
         
     # print movie
     display_movie_info(movie)
+
+    askuser = input("Do you want more info on the movie? (y/N): ")
+    if (askuser.upper() == 'Y'):
+        more_info(movie['id'])
 
 if __name__ == '__main__':
     main()
