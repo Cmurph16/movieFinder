@@ -1,0 +1,6 @@
+# ignore python virtual environment
+env
+# ignore logs
+*.log
+# ignore API keys
+*.key
